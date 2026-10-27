@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Day-by-day house cleaning and organizing checklist.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230A0A0A'/%3E%3Cpath d='M8 17l5 5 11-12' stroke='white' stroke-width='3' fill='none'/%3E%3C/svg%3E">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>House Reset</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  /* Layout: black on white, hairline rules, square corners, one narrow column. Color appears only in the Organize (mint) and Errand (coral) tags. */
+  --bg:#FFFFFF; --ink:#0A0A0A; --muted:#666666; --line:#DCDCDC;
+  --mint:#BFE9D5; --mint-ink:#0F4A37;
+  --coral:#B8402D; --coral-ink:#FFFFFF;
+  --font-display:"Geist","Helvetica Neue",Arial,system-ui,sans-serif;
+  --font-body:"Geist","Helvetica Neue",Arial,system-ui,sans-serif;
+  --font-mono:"Geist Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0A0A0A; --ink:#F2F2F2; --muted:#9A9A9A; --line:#2B2B2B;
+    --mint:#1F4A3B; --mint-ink:#A9ECD0;
+    --coral:#F07A63; --coral-ink:#0A0A0A;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0A0A0A; --ink:#F2F2F2; --muted:#9A9A9A; --line:#2B2B2B;
+  --mint:#1F4A3B; --mint-ink:#A9ECD0;
+  --coral:#F07A63; --coral-ink:#0A0A0A;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.45;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:8px 160px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:10}
+button{font:inherit;color:inherit;cursor:pointer;border-radius:0}
+.wrap{max-width:640px;margin:0 auto}
+h1,h2,h3{font-family:var(--font-display);margin:0;text-wrap:balance;line-height:1.1;font-weight:600;letter-spacing:-.02em}
+.hero{padding:24px 0 20px}
+.hero h1{font-size:44px;font-weight:600;letter-spacing:-.04em}
+.hero p{margin:8px 0 0;color:var(--muted);font-family:var(--font-mono);font-size:13px;text-transform:uppercase;letter-spacing:.06em}
+.ov{display:flex;align-items:center;gap:14px;margin-top:20px}
+.ov .bar{flex:1}
+.ov span{font-family:var(--font-mono);font-size:13px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.bar{height:3px;background:var(--line);overflow:hidden}
+.bar>i{display:block;height:100%;width:0;background:var(--ink);transition:width .25s}
+.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;display:flex;background:var(--bg);border-bottom:1px solid var(--line)}
+.tab{flex:1;min-height:48px;border:0;background:transparent;color:var(--muted);font-weight:500;font-size:15px;letter-spacing:.01em}
+.tab[aria-selected="true"]{color:var(--ink);font-weight:600;box-shadow:inset 0 -2px 0 var(--ink)}
+:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+main{padding-top:20px;display:flex;flex-direction:column;gap:20px}
+.days{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+.day{display:flex;flex-direction:column;gap:2px;align-items:flex-start;text-align:left;padding:10px;border:0;background:var(--bg);min-width:0}
+.day.sel{background:var(--ink);color:var(--bg)}
+.day .dw{font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:.06em;opacity:.65;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.day .dn{font-weight:600;font-size:16px;letter-spacing:-.01em;white-space:nowrap}
+.day .bar{width:100%;margin-top:8px}
+.day.sel .bar{background:rgba(128,128,128,.55)}
+.day.sel .bar>i{background:var(--bg)}
+.dayhead h2{font-size:30px;letter-spacing:-.03em}
+.theme{margin:6px 0 0;font-size:17px}
+.meta{margin:8px 0 0;color:var(--muted);font-size:13px;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.04em}
+.block{border:1px solid var(--line)}
+.block:has(.bhead[aria-expanded="true"]){border-color:var(--ink)}
+.bhead{width:100%;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px;min-height:72px;border:0;background:transparent;text-align:left}
+.bmain{display:flex;flex-direction:column;gap:8px;align-items:flex-start;min-width:0}
+.blabel{font-family:var(--font-display);font-weight:600;font-size:19px;letter-spacing:-.02em;line-height:1.15}
+.bmeta{display:flex;flex-direction:column;align-items:flex-end;gap:2px;font-family:var(--font-mono);font-size:12px;color:var(--muted);flex:none;font-variant-numeric:tabular-nums}
+.bcount{color:var(--ink);font-size:14px}
+.block.complete .blabel{color:var(--muted);text-decoration:line-through;text-decoration-thickness:1px}
+.block.complete .bcount{color:var(--muted)}
+.chip{display:inline-block;padding:3px 8px;border:1px solid var(--muted);color:var(--muted);font-family:var(--font-mono);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase}
+.m-organize{background:var(--mint);border-color:var(--mint);color:var(--mint-ink)}
+.m-errand{background:var(--coral);border-color:var(--coral);color:var(--coral-ink)}
+.tasks{list-style:none;margin:0;padding:0}
+.task{display:flex;gap:14px;align-items:flex-start;padding:14px 16px;min-height:56px;border-top:1px solid var(--line);cursor:pointer}
+.task input{position:absolute;opacity:0;width:1px;height:1px}
+.box{flex:none;width:24px;height:24px;border:1.5px solid var(--ink);margin-top:1px;position:relative;background:var(--bg)}
+.task input:checked+.box{background:var(--ink)}
+.task input:checked+.box::after{content:"";position:absolute;left:7px;top:2px;width:6px;height:12px;border:solid var(--bg);border-width:0 2px 2px 0;transform:rotate(45deg)}
+.task input:focus-visible+.box{outline:2px solid var(--ink);outline-offset:3px}
+.txt{min-width:0}
+.task input:checked~.txt{color:var(--muted);text-decoration:line-through;text-decoration-thickness:1px}
+.daydone{margin:0;padding:18px 16px;background:var(--ink);color:var(--bg);font-weight:600;font-size:20px;letter-spacing:-.02em}
+.note{margin:0;color:var(--muted);font-size:14px}
+.guide section{border-top:1px solid var(--ink);padding:16px 0 4px;display:flex;flex-direction:column;gap:12px}
+.guide h3{font-size:20px}
+.guide ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:8px}
+.guide dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:10px 16px}
+.guide dt{font-family:var(--font-mono);font-size:12px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;padding-top:3px}
+.guide dd{margin:0}
+#toast{position:fixed;left:0;right:0;bottom:calc(92px + env(safe-area-inset-bottom,0px));z-index:20;display:flex;justify-content:center;padding:0 max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px));pointer-events:none;z-index:20}
+#toast span{background:var(--ink);color:var(--bg);padding:10px 16px;font-weight:500;max-width:100%}
+#player{display:flex;justify-content:center;position:fixed;left:0;right:0;bottom:0;z-index:15;pointer-events:none;padding:0 max(16px,env(safe-area-inset-right,0px)) calc(14px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.pin{pointer-events:auto;width:min(100%,292px);margin:0 auto;background:var(--ink);background:color-mix(in srgb,var(--ink) 58%,transparent);-webkit-backdrop-filter:blur(14px) saturate(1.2);backdrop-filter:blur(14px) saturate(1.2);color:var(--bg);border:1px solid color-mix(in srgb,var(--bg) 22%,transparent);border-radius:24px;padding-top:7px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.16)}
+.pin :focus-visible{outline-color:var(--bg)}
+.pbar{height:2px;margin:0 20px;border-radius:2px;background:color-mix(in srgb,var(--bg) 28%,transparent);overflow:hidden}
+.pbar>i{display:block;height:100%;width:0;background:var(--bg)}
+.prow{display:flex;align-items:center;gap:8px;padding:4px 6px 6px 16px}
+.ppanel{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:8px 6px 2px 16px}
+#tTime{font-family:var(--font-mono);font-size:22px;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+#tMsg{flex:1;min-width:0;font-size:12px;opacity:.75;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pbtn,.seg button{min-height:38px;min-width:38px;padding:0 13px;font-size:14px;border-radius:999px;border:1px solid var(--bg);background:transparent;color:var(--bg);font-weight:600}
+.pbtn.solid,.seg button.on{background:var(--bg);color:var(--ink)}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.mini{pointer-events:auto;display:flex;align-items:center;gap:8px;min-height:38px;padding:0 16px 0 14px;border-radius:999px;background:var(--ink);background:color-mix(in srgb,var(--ink) 58%,transparent);-webkit-backdrop-filter:blur(14px) saturate(1.2);backdrop-filter:blur(14px) saturate(1.2);color:var(--bg);border:1px solid color-mix(in srgb,var(--bg) 22%,transparent);box-shadow:0 8px 24px rgba(0,0,0,.16);font-family:var(--font-mono);font-size:15px;font-variant-numeric:tabular-nums}
+.mini:focus-visible{outline-color:var(--ink)}
+.mini .dot{width:7px;height:7px;border-radius:50%;background:var(--bg);opacity:.4}
+.mini.run .dot{background:var(--mint);opacity:1;box-shadow:0 0 0 1px var(--bg)}
+@media (prefers-reduced-motion:reduce){.bar>i{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <h1>House Reset</h1>
+    <p>Oct 27 to Nov 1. Work starts Nov 2.</p>
+    <div class="ov"><div class="bar"><i id="ovBar"></i></div><span id="ovText">0 of 0</span></div>
+  </div>
+  <nav class="tabs" role="tablist" aria-label="Sections">
+    <button class="tab" role="tab" data-tab="plan" id="tab-plan">Plan</button>
+        <button class="tab" role="tab" data-tab="guide" id="tab-guide">Guide</button>
+  </nav>
+  <main id="view"></main>
+</div>
+<div id="player"><section class="pin" id="tPlayerPin" aria-label="Sprint timer"><div class="pbar"><i id="tBar"></i></div>
+<div class="ppanel" id="tPanel" hidden><div class="seg" role="group" aria-label="Sprint length"><button data-tset="10">10 min</button><button data-tset="25" class="on">25 min</button><button data-tset="45">45 min</button></div><div class="seg"><button data-treset="1">Reset</button><button data-tmin="1">Minimize</button></div></div>
+<div class="prow"><span id="tTime">25:00</span><span id="tMsg" aria-live="polite">25 min sprint</span><button class="pbtn solid" id="tStart" data-tstart="1">Start</button><button class="pbtn" id="tExp" data-texp="1" aria-expanded="false" aria-controls="tPanel" aria-label="Sprint length and reset">&#8943;</button></div></section><button class="mini" id="tMini" data-tmax="1" hidden aria-label="Open sprint timer"><i class="dot"></i><span id="tMiniTime">25:00</span></button></div>
+<div id="toast" aria-live="polite"></div>
+<script>
+"use strict";
+var MODE={organize:"Organize",clean:"Clean",setup:"Setup",errand:"Errand","break":"Break",catchup:"Catch-up"};
+function B(id,room,label,mode,min,tasks){return {id:id,room:room,label:label,mode:mode,min:min,tasks:tasks};}
+function D(id,short,date,dateLabel,name,theme,blocks,optional){return {id:id,short:short,date:date,dateLabel:dateLabel,name:name,theme:theme,blocks:blocks,optional:!!optional};}
+var BATH=function(){return [
+  "Clear the counter and toss anything empty or expired",
+  "Spray the toilet, tub, and shower and let it sit",
+  "Wipe the mirror and the counter",
+  "Scrub the sink, then the toilet, then the tub",
+  "Empty the trash and hang fresh towels"];};
+var BEDCLEAN=function(who){return [
+  "Strip the bed"+(who?"s":"")+" and start the bedding in the wash",
+  "Dust shelves, dresser, windowsill, and baseboards, top to bottom",
+  "Wipe door handles and light switches",
+  "Vacuum the floor, including under the bed"+(who?"s":""),
+  "Make the bed"+(who?"s":"")+" with fresh sheets"];};
+var LUNCH=function(id){return B(id,"break","Lunch","break",20,["Eat a real lunch and sit down for 20 minutes"]);};
+var REST=function(id){return B(id,"break","Break","break",10,["Water, a snack, and 10 minutes off your feet"]);};
+var LAUNDRY=function(id,min){return B(id,"laundry","Laundry check","setup",min,[
+  "Move laundry from washer to dryer, and dryer to folding",
+  "Put away what is folded",
+  "Start the next load"]);};
+var SORT=function(who){return [
+  "Clear the floor: everything goes into Keep, Donate, Storage, or Trash",
+  "Clothes: outgrown or unworn go to Donate",
+  "Clothes: off-season go to a Storage box labeled with room and contents",
+  "Toys, games, and books: keep the favorites within reach, the rest to Storage or Donate",
+  "Give every Keep item a home. Skip the closet shelves and deep drawers; those wait until after Nov 2"];};
+var DAYS=[
+D("d1","Tue","2026-10-27","Oct 27","Tuesday","Stay-with-her day. Do any of this only if it fits",[
+  B("tu1","house","Quick setup","setup",10,[
+    "Fill one caddy: all-purpose spray, glass cleaner, toilet cleaner, rags, gloves",
+    "Set out four bags or boxes by the front door: Donate, Storage, Trash, Recycle",
+    "Take a Before photo of each space on your phone as you walk past it"]),
+  B("tu2","laundry","Laundry going","setup",5,[
+    "Start one load",
+    "Move it to the dryer when it finishes",
+    "Put away what is folded"]),
+  B("tu3","kitchen","Dishes and trash","clean",15,[
+    "Collect cups and dishes into the kitchen",
+    "Load the dishwasher and run it",
+    "Take one trash bag through the house and pick up only trash"])
+],true),
+D("d2","Wed","2026-10-28","Oct 28","Wednesday","Bathrooms, kitchen, laundry room",[
+  B("we1","bath1","Bathroom 1","clean",30,BATH()),
+  B("we2","bath2","Bathroom 2","clean",30,BATH()),
+  REST("we3"),
+  B("we4","bath3","Bathroom 3","clean",30,BATH()),
+  LUNCH("we5"),
+  B("we6","kitchen","Kitchen reset","clean",50,[
+    "Throw out trash and anything expired on the counters",
+    "Load the dishwasher and run it",
+    "Put away anything that has a home. The rest goes in one basket",
+    "Wipe the counters, stovetop, and sink",
+    "Take out the trash"]),
+  REST("we7"),
+  B("we8","laundry","Laundry room","organize",30,[
+    "Clear the floor and flat surfaces into a pile",
+    "Toss empty bottles, lint, and used dryer sheets",
+    "Group detergent and supplies on one shelf",
+    "Wipe the washer and dryer tops and sweep the floor"]),
+  LAUNDRY("we9",15)
+]),
+D("d3","Thu","2026-10-29","Oct 29","Thursday","Miles' room and the girls' room",[
+  B("th1","miles","Miles' room","organize",50,SORT()),
+  B("th2","miles","Miles' room","clean",25,BEDCLEAN(false)),
+  REST("th3"),
+  B("th4","girls","Girls' room","organize",60,SORT()),
+  LUNCH("th5"),
+  B("th6","girls","Girls' room","clean",30,BEDCLEAN(true)),
+  REST("th7"),
+  LAUNDRY("th8",15)
+]),
+D("d4","Fri","2026-10-30","Oct 30","Friday","Master bedroom and living room",[
+  B("fr1","master","Master bedroom","organize",50,[
+    "Clear the floor and the nightstands",
+    "Closet: pull anything you have not worn in a year into Donate. Stop at 20 minutes",
+    "Closet: off-season clothing goes to Storage",
+    "Dresser: clear the top and sort only the worst drawer",
+    "Give every Keep item a home"]),
+  B("fr2","master","Master bedroom","clean",25,BEDCLEAN(false)),
+  REST("fr3"),
+  B("fr4","living","Living room","organize",40,[
+    "Collect cups, dishes, and trash in one pass",
+    "Return stray items to their rooms in one trip",
+    "Clear the coffee table and side tables",
+    "Fold blankets and straighten pillows",
+    "Put cords and remotes in one spot",
+    "Anything left with no home: decide Donate, Storage, or Trash"]),
+  LUNCH("fr5"),
+  B("fr6","living","Living room","clean",35,[
+    "Dust shelves, TV stand, and windowsills, top to bottom",
+    "Wipe light switches, remotes, and door handles",
+    "Vacuum under and between the couch cushions",
+    "Wipe the coffee table and side tables"]),
+  REST("fr7"),
+  LAUNDRY("fr8",15)
+]),
+D("d5","Sat","2026-10-31","Oct 31","Saturday","Dining room, storage run, floors. Tightest day, so anything left slides to Sunday",[
+  B("sa1","kitchen","Dining room","organize",35,[
+    "Clear the table completely",
+    "Sort mail and papers into one tray: act, file, or shred",
+    "Return stray items to their rooms in one trip",
+    "Wipe the table and chairs"]),
+  B("sa2","kitchen","Kitchen: surfaces","clean",25,[
+    "Wipe the cabinet fronts and handles",
+    "Clean the microwave inside and out",
+    "Wipe the front of the oven and the dishwasher"]),
+  REST("sa3"),
+  B("sa4","house","Storage run and drop-off","errand",60,[
+    "Check the label on every Storage box",
+    "Load the Storage boxes and the Donate bags in the car",
+    "Drop off the Storage boxes",
+    "Drop off the donations and ask for a receipt",
+    "Put the Trash and Recycle out"]),
+  LUNCH("sa5"),
+  B("sa6","house","Vacuum every room","clean",35,[
+    "Vacuum the living room and hallways",
+    "Vacuum Miles' room and the girls' room",
+    "Vacuum the master bedroom"]),
+  B("sa7","house","Mop hard floors","clean",30,[
+    "Mop the kitchen and dining room",
+    "Mop all three bathrooms"]),
+  B("sa8","house","Halloween prep (optional)","setup",15,[
+    "Sweep the entry and porch",
+    "Set the candy bowl where it will not get knocked over"])
+]),
+D("d6","Sun","2026-11-01","Nov 1","Sunday","Catch up, walkthrough, After photos. Work starts tomorrow",[
+  B("su1","house","Catch-up","catchup",30,[
+    "Do any unchecked task that still matters to you",
+    "Skip the rest. Leaving it is fine"]),
+  B("su2","house","Whole house walkthrough","clean",30,[
+    "Walk each room with a basket and a trash bag",
+    "Put every stray item back in its home",
+    "Fix anything that takes under 2 minutes and leave the rest"]),
+  B("su3","house","After photos","setup",20,[
+    "Take an After photo of each space from the same spot as the Before photo",
+    "Compare them with your Before photos"]),
+  B("su4","house","Ready for Monday","setup",20,[
+    "Lay out work clothes and pack your bag",
+    "Set the Monday morning alarm",
+    "Look at the clean house for a minute"]),
+  B("su5","break","Reward","break",10,["Pick your reward and take it"])
+])
+];
+
+/* ---------- state ---------- */
+var view=document.getElementById("view");
+var S={done:{},tab:"plan",day:null,open:{},rev:0};
+var LS="house-reset-v1";
+var ALL=[];
+DAYS.forEach(function(d){d.blocks.forEach(function(b){b.tasks.forEach(function(t,i){ALL.push({id:b.id+"-"+i,day:d.id,block:b.id,room:b.room});});});});
+function stat(fn){var t=0,n=0;ALL.forEach(function(x){if(fn(x)){t++;if(S.done[x.id])n++;}});return {done:n,total:t};}
+function dayStat(d){return stat(function(x){return x.day===d.id;});}
+function blockStat(b){return stat(function(x){return x.block===b.id;});}
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+function pct(s){return s.total?Math.round(100*s.done/s.total):0;}
+function dayMin(d){return d.blocks.reduce(function(a,b){return a+b.min;},0);}
+function hrs(m){return (m/60).toFixed(1).replace(".0","")+" hrs";}
+function todayISO(){var d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+function pickDay(){var t=todayISO(),f=DAYS.filter(function(d){return d.date===t;})[0];if(f)return f.id;return t<DAYS[0].date?DAYS[0].id:DAYS[DAYS.length-1].id;}
+function loadLocal(){try{var v=JSON.parse(localStorage.getItem(LS)||"{}");if(v&&v.done)S.done=v.done;}catch(e){}}
+function saveLocal(){try{localStorage.setItem(LS,JSON.stringify({done:S.done}));}catch(e){}}
+var toastT=null;
+function toast(m){var el=document.getElementById("toast");el.innerHTML="<span>"+esc(m)+"</span>";clearTimeout(toastT);toastT=setTimeout(function(){el.innerHTML="";},3200);}
+
+function queueSave(){S.rev++;saveLocal();}
+
+/* ---------- plan view ---------- */
+function firstOpenBlock(d){for(var i=0;i<d.blocks.length;i++){var s=blockStat(d.blocks[i]);if(s.done<s.total)return d.blocks[i];}return null;}
+function isOpen(d,b){if(S.open[b.id]!==undefined)return S.open[b.id];var f=firstOpenBlock(d);return !!f&&f.id===b.id;}
+var T={total:1500,left:1500,running:false,end:0,iv:null,wl:null};
+function fmt(s){var m=Math.floor(s/60),r=s%60;return String(m).padStart(2,"0")+":"+String(r).padStart(2,"0");}
+function renderPlan(){
+  var d=DAYS.filter(function(x){return x.id===S.day;})[0],today=todayISO();
+  var strip=DAYS.map(function(x){
+    var p=pct(dayStat(x));
+    return '<button class="day'+(x.id===S.day?" sel":"")+'" data-day="'+x.id+'" aria-pressed="'+(x.id===S.day)+'"><span class="dw">'+x.short+(x.date===today?" · today":(x.optional?" · light":""))+'</span><span class="dn">'+x.dateLabel+'</span><span class="bar"><i data-dp="'+x.id+'" style="width:'+p+'%"></i></span></button>';
+  }).join("");
+  var blocks=d.blocks.map(function(b){
+    var s=blockStat(b),open=isOpen(d,b);
+    var tasks=b.tasks.map(function(t,i){
+      var id=b.id+"-"+i;
+      return '<li><label class="task"><input type="checkbox" id="t-'+id+'" data-task="'+id+'"'+(S.done[id]?" checked":"")+'><span class="box"></span><span class="txt">'+esc(t)+'</span></label></li>';
+    }).join("");
+    return '<article class="block'+(s.done===s.total?" complete":"")+'" data-block="'+b.id+'">'+
+      '<button class="bhead" data-toggle="'+b.id+'" aria-expanded="'+open+'"><span class="bmain"><span class="blabel">'+esc(b.label)+'</span><span class="chip m-'+b.mode+'">'+MODE[b.mode]+'</span></span>'+
+      '<span class="bmeta"><span>'+b.min+' min</span><span class="bcount" data-bc="'+b.id+'">'+s.done+'/'+s.total+'</span></span></button>'+
+      '<ul class="tasks"'+(open?"":" hidden")+'>'+tasks+'</ul></article>';
+  }).join("");
+  var ds=dayStat(d);
+  view.innerHTML='<div class="days" role="group" aria-label="Pick a day">'+strip+'</div>'+
+    '<div class="dayhead"><h2>'+d.name+', '+d.dateLabel+'</h2><p class="theme">'+esc(d.theme)+'</p><p class="meta">'+hrs(dayMin(d))+' with breaks · <span data-dc>'+ds.done+'/'+ds.total+' done</span></p></div>'+
+    blocks+
+    '<p class="daydone" id="dayDone"'+(ds.done===ds.total?"":" hidden")+'>Day done. Stop here and rest.</p>';
+  tickUI();
+}
+function applyOpen(){
+  var d=DAYS.filter(function(x){return x.id===S.day;})[0];
+  d.blocks.forEach(function(b){
+    var el=view.querySelector('[data-block="'+b.id+'"]');if(!el)return;
+    var open=isOpen(d,b);
+    el.querySelector(".tasks").hidden=!open;
+    el.querySelector(".bhead").setAttribute("aria-expanded",open);
+  });
+}
+function refreshCounts(){
+  var all=stat(function(){return true;});
+  document.getElementById("ovBar").style.width=pct(all)+"%";
+  document.getElementById("ovText").textContent=all.done+" of "+all.total;
+  if(S.tab!=="plan")return;
+  var d=DAYS.filter(function(x){return x.id===S.day;})[0];
+  DAYS.forEach(function(x){var el=view.querySelector('[data-dp="'+x.id+'"]');if(el)el.style.width=pct(dayStat(x))+"%";});
+  d.blocks.forEach(function(b){
+    var s=blockStat(b),el=view.querySelector('[data-block="'+b.id+'"]');if(!el)return;
+    el.classList.toggle("complete",s.done===s.total);
+    el.querySelector("[data-bc]").textContent=s.done+"/"+s.total;
+  });
+  var ds=dayStat(d);
+  var dc=view.querySelector("[data-dc]");if(dc)dc.textContent=ds.done+"/"+ds.total+" done";
+  var dd=document.getElementById("dayDone");if(dd)dd.hidden=ds.done!==ds.total;
+}
+function toggleTask(id,on){
+  if(on)S.done[id]=1;else delete S.done[id];
+  queueSave();refreshCounts();
+  var bid=id.slice(0,id.lastIndexOf("-"));
+  var d=DAYS.filter(function(x){return x.id===S.day;})[0];
+  var b=d.blocks.filter(function(x){return x.id===bid;})[0];
+  var s=blockStat(b);
+  if(on&&s.done===s.total){
+    setTimeout(function(){
+      if(blockStat(b).done!==blockStat(b).total)return;
+      S.open[b.id]=false;
+      var n=firstOpenBlock(d);if(n)S.open[n.id]=true;
+      applyOpen();
+      if(n){var el=view.querySelector('[data-block="'+n.id+'"]');if(el&&el.scrollIntoView)el.scrollIntoView({behavior:"smooth",block:"start"});}
+    },550);
+  }
+}
+
+/* ---------- timer ---------- */
+function tickUI(){
+  var t=document.getElementById("tTime");if(!t)return;
+  t.textContent=fmt(T.left);
+  var mt=document.getElementById("tMiniTime");if(mt)mt.textContent=fmt(T.left);
+  var mn=document.getElementById("tMini");if(mn)mn.classList.toggle("run",T.running);
+  document.getElementById("tBar").style.width=(100*(1-T.left/T.total))+"%";
+  document.getElementById("tStart").textContent=T.running?"Pause":(T.left<T.total&&T.left>0?"Resume":"Start");
+  document.getElementById("tMsg").textContent=T.left===0?"Time. Stand up and take 5.":Math.round(T.total/60)+" min sprint";
+}
+function tPause(){clearInterval(T.iv);T.running=false;if(T.wl){try{T.wl.release();}catch(e){}T.wl=null;}tickUI();}
+function tToggle(){
+  if(T.running){tPause();return;}
+  if(T.left===0)T.left=T.total;
+  T.end=Date.now()+T.left*1000;T.running=true;
+  T.iv=setInterval(function(){
+    T.left=Math.max(0,Math.round((T.end-Date.now())/1000));tickUI();
+    if(T.left===0){tPause();setMin(false);beep();}
+  },250);
+  try{if(navigator.wakeLock)navigator.wakeLock.request("screen").then(function(l){T.wl=l;},function(){});}catch(e){}
+  tickUI();
+}
+var LSM="house-reset-timer-min";
+function setMin(v){
+  document.getElementById("tPlayerPin").hidden=v;document.getElementById("tMini").hidden=!v;
+  try{localStorage.setItem(LSM,v?"1":"0");}catch(e){}
+}
+function beep(){
+  try{var C=window.AudioContext||window.webkitAudioContext,c=new C(),o=c.createOscillator(),g=c.createGain();
+    o.frequency.value=660;g.gain.value=.15;o.connect(g);g.connect(c.destination);o.start();
+    setTimeout(function(){o.stop();c.close();},600);}catch(e){}
+}
+
+/* ---------- guide view ---------- */
+function renderGuide(){
+  view.innerHTML='<div class="guide" style="display:flex;flex-direction:column;gap:16px">'+
+  '<section><h3>How each day works</h3><ul><li>Open the day. Only the next unfinished block is open.</li><li>Do the first task even if you feel nothing. Each block starts small.</li><li>Check each task the moment you finish it. Skipping one is fine.</li><li>Organizing and cleaning never share a block. Sort first, wipe second.</li><li>When a day says Done, stop. Rest counts as part of the plan.</li></ul></section>'+
+  '<section><h3>Sorting rules</h3><dl><dt>Keep</dt><dd>Used in the last 6 months. Give it a home right now.</dd><dt>Storage</dt><dd>Seasonal, sentimental, or hard to replace. Box it and label the box with room and contents.</dd><dt>Donate</dt><dd>Works, but nobody uses it. The bag goes by the door and never back into the room.</dd><dt>Trash</dt><dd>Broken, expired, stained, or missing pieces. Recycle what you can.</dd><dt>No home</dt><dd>Put it in one basket. Decide on Wednesday.</dd></dl></section>'+
+  '<section><h3>Moved to after Nov 2</h3><ul><li>Deep sorting of closets, dresser drawers, and the kids\' shelves</li><li>Pantry, cabinets, and the fridge</li><li>Baseboards, windows, and inside the microwave and oven</li><li>Shelf-by-shelf decluttering in the living and dining rooms</li></ul><p class="note">Put one of these on a weekend, 30 minutes at a time.</p></section>'+
+  '<section><h3>When you stall</h3><ul><li>Set the timer for 10 minutes and do one task.</li><li>Switch rooms or take the break block, then come back.</li><li>Check off a task you can leave until after Nov 2.</li><li>The target is clean enough to come home to. Perfect is not required.</li></ul></section></div>';
+}
+
+/* ---------- shell ---------- */
+function render(){
+  ["plan","guide"].forEach(function(t){document.getElementById("tab-"+t).setAttribute("aria-selected",S.tab===t);});
+  if(S.tab==="plan")renderPlan();else renderGuide();
+  refreshCounts();
+}
+document.addEventListener("click",function(e){
+  var el=e.target.closest("[data-tab],[data-day],[data-toggle],[data-tset],[data-tstart],[data-treset],[data-texp],[data-tmin],[data-tmax]");if(!el)return;
+  if(el.dataset.tab){S.tab=el.dataset.tab;render();window.scrollTo(0,0);return;}
+  if(el.dataset.day){S.day=el.dataset.day;renderPlan();refreshCounts();return;}
+  if(el.dataset.toggle){
+    var d=DAYS.filter(function(x){return x.id===S.day;})[0],b=d.blocks.filter(function(x){return x.id===el.dataset.toggle;})[0];
+    S.open[b.id]=!isOpen(d,b);applyOpen();return;
+  }
+  if(el.dataset.tset){tPause();T.total=T.left=parseInt(el.dataset.tset,10)*60;
+    document.querySelectorAll("[data-tset]").forEach(function(x){x.classList.toggle("on",x===el);});tickUI();return;}
+  if(el.dataset.tstart){tToggle();return;}
+  if(el.dataset.treset){tPause();T.left=T.total;tickUI();return;}
+  if(el.dataset.tmin){setMin(true);return;}
+  if(el.dataset.tmax){setMin(false);return;}
+  if(el.dataset.texp){var pn=document.getElementById("tPanel"),o=pn.hidden;pn.hidden=!o;el.setAttribute("aria-expanded",o);return;}
+});
+document.addEventListener("change",function(e){
+  var t=e.target;
+  if(t.dataset&&t.dataset.task){toggleTask(t.dataset.task,t.checked);return;}
+});
+
+/* ---------- boot ---------- */
+loadLocal();S.day=pickDay();render();tickUI();
+try{if(localStorage.getItem(LSM)==="1")setMin(true);}catch(e){}
+</script>
+</body>
+</html>
